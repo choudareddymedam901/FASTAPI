@@ -36,3 +36,25 @@ def store_student_in_db(student: Students):
     cursor.close()
     conn.close()
     return {"message": "Student stored in database successfully", "student": student.model_dump()}
+
+@app.put("/students/db/update")
+def update_student_in_db(student: Students):
+    conn = get_connection_url()
+    cursor = conn.cursor()
+    update_query = "UPDATE student SET name = %s, age = %s WHERE id = %s"
+    cursor.execute(update_query, (student.name, student.age, student.id))
+    conn.commit()
+    cursor.close()
+    conn.close()
+    return {"message": "Student updated in database successfully", "student": student.model_dump()}
+
+@app.delete("/students/db/delete/{student_id}")
+def delete_student_from_db(student_id: int):
+    conn = get_connection_url()
+    cursor = conn.cursor()
+    delete_query = "DELETE FROM student WHERE id = %s"
+    cursor.execute(delete_query, (student_id,))
+    conn.commit()
+    cursor.close()
+    conn.close()
+    return {"message": "Student deleted from database successfully", "student_id": student_id}
